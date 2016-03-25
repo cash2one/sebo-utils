@@ -49,12 +49,14 @@ other = parser.add_argument_group('Other options')
 custom.add_argument("-_", "--new_s-project", action="store_true", help="Create a new _s project" )
 custom.add_argument("-e", "--existing_s-project", action="store_true", help="retrieve an existing _s project")
 custom.add_argument("-wp", "--wordpress", action="store_true", help="sets up a new wordpress site")
-#custom.add_argument("--theme", help="Can be used in conjuction with --existing_s-project if the theme name differs from the project name" )
+custom.add_argument("--theme", help="Can be used in conjuction with --existing_s-project if the theme name differs from the project name" )
 custom.add_argument("-w", "--watch", help="watches the project for changes. This accomplishes the same thing as running the gulp command", action="store_true")
 
+other.add_argument("-s", "--serve", help="Starts an http server, allowing other computers to interact with this script", action="store_true")
 other.add_argument("-n", "--new", help="Forget the other commands, this one runs through an interactive session to help you set things up.", action="store_true")
 other.add_argument("--update", help="updates this script", action="store_true")
-other.add_argument("-h", "--help", action="help", help="show this help message and exit")
+#other.add_argument("-v", "--verbose", help="", action="store_true")
+other.add_argument("-h", "--help", action="help", help="")
 
 args = parser.parse_args()
 #add back in the arg we manually handled

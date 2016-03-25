@@ -18,7 +18,7 @@ class SSHSession(object):
     # ssh.get_all('/path/to/remote/source/dir','/path/to/local/destination')
     # ssh.command('echo "Command to execute"')
 
-    def __init__(self,hostname,username='root',key_file=None,password=None):
+    def __init__(self, hostname, username='root', password=None, key_file=None):
         #
         #  Accepts a file-like object (anything with a readlines() function)
         #  in either dss_key or rsa_key with a private key.  Since I don't
@@ -28,26 +28,28 @@ class SSHSession(object):
         self.sock.connect((hostname,22))
         self.t = paramiko.Transport(self.sock)
         self.t.start_client()
-        keys = paramiko.util.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
-        key = self.t.get_remote_server_key()
-        # supposed to check for key in keys, but I don't much care right now to find the right notation
-        if key_file is not None:
-            if isinstance(key,str):
-                key_file=open(key,'r')
-            key_head=key_file.readline()
-            key_file.seek(0)
-            if 'DSA' in key_head:
-                keytype=paramiko.DSSKey
-            elif 'RSA' in key_head:
-                keytype=paramiko.RSAKey
-            else:
-                raise Exception("Can't identify key type")
-            pkey=keytype.from_private_key(key_file)
-            self.t.auth_publickey(username, pkey)
-        else:
-            if password is not None:
-                self.t.auth_password(username,password,fallback=False)
-            else: raise Exception('Must supply either key_file or password')
+
+        self.t.auth_password(username, password)
+        # keys = paramiko.util.load_host_keys(os.path.expanduser2('~/.ssh/known_hosts'))
+        # key = self.t.get_remote_server_key()
+        # # supposed to check for key in keys, but I don't much care right now to find the right notation
+        # if key_file is not None:
+        #     if isinstance(key,str):
+        #         key_file=open(key,'r')
+        #     key_head=key_file.readline()
+        #     key_file.seek(0)
+        #     if 'DSA' in key_head:
+        #         keytype=paramiko.DSSKey
+        #     elif 'RSA' in key_head:
+        #         keytype=paramiko.RSAKey
+        #     else:
+        #         raise Exception("Can't identify key type")
+        #     pkey=keytype.from_private_key(key_file)
+        #     self.t.auth_publickey(username, pkey)
+        # else:
+        #     if password is not None:
+        #         self.t.auth_password(username,password,fallback=False)
+        #     else: raise Exception('Must supply either key_file or password')
         self.sftp=paramiko.SFTPClient.from_transport(self.t)
 
     def command(self,cmd):
@@ -75,17 +77,21 @@ class SSHSession(object):
         #  Copy localfile to remotefile, overwriting or creating as needed.
         self.sftp.put(localfile,remotefile)
 
-    def put_all(self,localpath,remotepath):
+    def put_all(self, localpath, remotepath):
         #  recursively upload a full directory
         os.chdir(os.path.split(localpath)[0])
         parent=os.path.split(localpath)[1]
-        for walker in os.walk(parent):
+        for walker in os.walk(localpath):
             try:
                 self.sftp.mkdir(os.path.join(remotepath,walker[0]))
             except:
                 pass
-            for file in walker[2]:
-                self.sftp.put(os.path.join(walker[0],file),os.path.join(remotepath,walker[0],file))
+            for f in walker[2]:
+                #print(os.path.join(walker[0], f), os.path.join(remotepath,walker[0], f))
+                self.sftp.put(
+                    os.path.join(walker[0], f),
+                    os.path.join(remotepath,walker[0], f)
+                )
 
     def get(self,remotefile,localfile):
         #  Copy remotefile to localfile, overwriting or creating as needed.
@@ -103,7 +109,6 @@ class SSHSession(object):
                 folders.append(f.filename)
             else:
                 files.append(f.filename)
-        print (path,folders,files)
         yield path,folders,files
         for folder in folders:
             new_path=os.path.join(remotepath,folder)
