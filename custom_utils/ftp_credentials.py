@@ -18,9 +18,9 @@ remote_sync_file_contents = """
     ".ftppass"
   ],
   "transport": "scp",
-  "target": """" + vars.webfaction_theme_dir + """",
-  "username": """" + vars.ftp_username + """",
-  "password": """" + vars.ftp_password + """"
+  "target": """ + '"' + vars.webfaction_theme_dir + '"' + """,
+  "username": """ + '"' + vars.ftp_username + '"' + """,
+  "password": """ + '"' + vars.ftp_password + '"' + """
 }
 """
 

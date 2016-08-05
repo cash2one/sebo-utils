@@ -1,0 +1,5 @@
+Run 
+smash --help
+for help
+
+Some stuff to know when developing sebo-utils. The sebo_runner sub-package takes care of reading in command-line paramaters and saving them inside of the vars library. This folder is added to the system path so that the vars library can be called from anywhere. The lib package is also added to the system path and it's libraries are available from anywhere as well. To add a new command, add it to one of the util folders, and add the appropriate entries in main.py and sebo_runner/get_cmd_line_options.py

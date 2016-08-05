@@ -26,23 +26,31 @@ def change_current_project(project):
     webfaction_theme_dir = '/home/%s/webapps/%s/wp-content/themes/%s/' % (ftp_username, current_project, theme)
 
 script_dir = os.path.dirname( os.path.dirname(os.path.realpath(sys.modules[__name__].__file__)) ) # just getting the parent directory of this file
+storage_dir = os.path.join(os.path.expanduser('~'), '.sebo-utils') #store files in here so they do not get committed
 
 #create our config readers
 sebo_conf = ConfigParser.RawConfigParser()
 sebo_conf.read( os.path.join(script_dir, 'sebo-utils.conf') )
+
 credentials_conf = ConfigParser.RawConfigParser()
-credentials_conf.read( sebo_conf.get('locations', 'credentials_conf_loc') )
+conf_loc = sebo_conf.get('locations', 'credentials_conf_loc')
+conf_loc = conf_loc if conf_loc else os.path.join(storage_dir, "credentials.conf")
+credentials_conf.read( conf_loc )
 
 #read vars from conf files
 ftp_host             = credentials_conf.get('webfaction', 'host')
-ftp_username         = credentials_conf.get('webfaction', 'username')
-ftp_password         = credentials_conf.get('webfaction', 'password')
+ssh_username       = credentials_conf.get('webfaction', 'ssh-username')
+ssh_password       = credentials_conf.get('webfaction', 'ssh-password')
+ftp_username         = credentials_conf.get('webfaction', 'ftp-username') or ssh_username
+ftp_password         = credentials_conf.get('webfaction', 'ftp-password') or ssh_password
 projects_root_dir    = os.path.normpath(sebo_conf.get('locations', 'project_dir'))
 
 #save some vars from the command line options
 from get_cmd_line_options import args
-current_project    = getattr(args, 'current_project', get_project_from_dir(os.getcwd()) )
+current_project    = args.current_project if args.current_project else get_project_from_dir(os.getcwd())
 theme              = args.theme if args.theme else current_project
+randomPasswd       = args.random
+dns_output_file    = args.dns[0] if args.dns else None
 #verbose            = getattr(args, 'verbose')
 
 #A few more variables
