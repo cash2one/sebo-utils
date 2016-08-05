@@ -1,11 +1,11 @@
 ''' runs the gulp command. If a project was specified or if we are within a project folder, we cd to that directory '''
 
-from __future__ import print_function
+
 import os.path, subprocess
 import vars
 
 if not vars.current_project:
-    vars.change_current_project( raw_input('Enter a project to watch: ') )
+    vars.change_current_project( input('Enter a project to watch: ') )
 try:
     os.chdir(vars.project_dir)
     print('watching %s' % vars.project_dir)
