@@ -4,9 +4,9 @@ import os, sys, subprocess, builtins
 
 #add sebo_runner and lib to the system path
 this_dir = os.path.dirname(os.path.realpath(__file__))
-sebo_runner_dir = os.path.join(this_dir, 'sebo_runner')
+runner_dir = os.path.join(this_dir, 'runner')
 lib_dir = os.path.join(this_dir, 'lib')
-sys.path.append(sebo_runner_dir)
+sys.path.append(runner_dir)
 sys.path.append(lib_dir)
 
 import vars #oops I just overwrote a built in function. Access it from __builtin__.vars if yous need it.
@@ -30,9 +30,6 @@ if tasks_to_run.existing_s_project:
 
 if tasks_to_run.watch:
     import wordpress_utils.watch
-
-if tasks_to_run.serve:
-    import serve
 
 if tasks_to_run.filezilla:
     import maintenance_utils.filezilla_passwords
