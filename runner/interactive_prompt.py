@@ -52,8 +52,12 @@ def get_missing_info(args):
         if not args.md5:
             args.md5 == str(input('Enter a password or leave empty for a random one: '))
 
-    if not set(["--filezilla"]).isdisjoint(sys.argv):
-        if not args.filezilla:
-            args.filezilla == str(input('Enter the name of a Filezilla entry: '))
+    if not set(["--wpw"]).isdisjoint(sys.argv):
+        while len(args.wpw) < 1:
+            response = str(input('Enter a client name (example Ujido): '))
+            args.wpw.append( response )
+        while len(args.wpw) < 2:
+            response = str(input('If this is a WPW 99 client enter a 1. If this is a WPW client enter a 2. If this is a WPW and Maintenance client enter a 3: '))
+            args.wpw.append( response )
 
     return args

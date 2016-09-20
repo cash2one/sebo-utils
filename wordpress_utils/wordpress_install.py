@@ -95,7 +95,6 @@ try:
         ###############################################
 
         if True:
-            #print("There is about a 5 minute wait for your site to be created. If you notice your site is created before this time, you may push enter to continue")
             print('waiting 5 minutes for the site to be created...')
             time.sleep(300)
         if False:
@@ -113,7 +112,7 @@ try:
         #create the sitekeeper user
         def create_password():
             import string, random
-            chars = string.letters + string.digits + string.punctuation
+            chars = string.ascii_letters + string.digits + string.punctuation
             passwd_size = 16
             password = ''.join((random.SystemRandom().choice(chars)) for i in range(passwd_size))
             print("the wordpress credential are now:")

@@ -1,63 +1,72 @@
 ''' A module of useful variables consisting mainly of variables
 created from command line arguments and from data in config files. '''
-import os.path, sys, configparser
+import configparser
+from pathlib import Path
 
-def get_project_from_dir(the_dir):
+def _get_project_from_dir(the_dir):
     ''' returns which project a directory is inside of '''
-    if (the_dir is None):
-        the_dir = os.getcwd()
-
-    projects = os.listdir(projects_root_dir)
-    the_dir = os.path.normpath(the_dir) #remove any trailing slashes
-
-    def inner(the_dir):
-        parent_dir_path, tail = os.path.split(the_dir)
-        if tail in projects:
-            return tail
-        if not tail:
-            return None
-        return inner(parent_dir_path)
-    return inner(the_dir)
+    try:
+        return Path(the_dir).resolve().relative_to(projects_root_dir).parent
+    except ValueError:
+        return None
 
 def change_current_project(project):
-    global current_project, project_dir, webfaction_theme_dir
+    '''changes the current_project variable along with all variables in this module that are based off of the current_project '''
+    global current_project, project_dir, webfaction_theme_dir, theme
     current_project      = project
-    project_dir          = os.path.normpath( os.path.join( projects_root_dir, current_project or '' ) )
+    project_dir          = projects_root_dir / (current_project or '')
+    if theme != current_project:
+        project_dir = project_dir / theme
+    project_dir = str(project_dir)
     webfaction_theme_dir = '/home/%s/webapps/%s/wp-content/themes/%s/' % (ftp_username, current_project, theme)
 
-script_dir = os.path.dirname( os.path.dirname(os.path.realpath(sys.modules[__name__].__file__)) ) # just getting the parent directory of this file
-storage_dir = os.path.join(os.path.expanduser('~'), '.sebo-utils') #store files in here so they do not get committed
+script_dir = Path(Path(__file__).resolve().parent.parent) # just getting the parent directory of this file
+storage_dir = Path.home() / '.smash-utils' #store files in here that you do not want to have committed like the user credentials config
 
 #create our config readers
 sebo_conf = configparser.RawConfigParser()
-sebo_conf.read( os.path.join(script_dir, 'sebo-utils.conf') )
+sebo_conf.read( str(script_dir / 'sebo-utils.conf') )
 
 credentials_conf = configparser.RawConfigParser()
-conf_loc = sebo_conf.get('locations', 'credentials_conf_loc')
-conf_loc = conf_loc if conf_loc else os.path.join(storage_dir, "credentials.conf")
-credentials_conf.read( conf_loc )
+credentials_conf_loc = sebo_conf.get('locations', 'credentials_conf_loc', fallback=None)
+if not credentials_conf_loc:
+    credentials_conf_loc = storage_dir / "credentials.conf"
+google_drive_root_dir = Path( sebo_conf.get('locations', 'google_drive', fallback="") )
+google_drive_smash_utils_dir = google_drive_root_dir / "smash-utils"
+google_drive_maintenance_dir = google_drive_root_dir / "Sebo Dev" / "WordPress Warranty & Maintanence"
 
+credentials_conf.read( str(credentials_conf_loc) )
 #read vars from conf files
-ftp_host             = credentials_conf.get('webfaction', 'host')
-ssh_username         = credentials_conf.get('webfaction', 'ssh-username')
-ssh_password         = credentials_conf.get('webfaction', 'ssh-password')
-ftp_username         = credentials_conf.get('webfaction', 'ftp-username') or ssh_username
-ftp_password         = credentials_conf.get('webfaction', 'ftp-password') or ssh_password
-projects_root_dir    = os.path.normpath(sebo_conf.get('locations', 'project_dir'))
+ftp_host             = credentials_conf.get('webfaction', 'host', fallback=None)
+ssh_username         = credentials_conf.get('webfaction', 'ssh-username', fallback=None)
+ssh_password         = credentials_conf.get('webfaction', 'ssh-password', fallback=None)
+ftp_username         = credentials_conf.get('webfaction', 'ftp-username', fallback=None) or ssh_username
+ftp_password         = credentials_conf.get('webfaction', 'ftp-password', fallback=None) or ssh_password
+projects_root_dir    = Path(sebo_conf.get('locations', 'project_dir', fallback=""))
+google_drive_client_secret = credentials_conf.get('google-drive', 'client-secret', fallback=None)
+lastpass_username = credentials_conf.get('lastpass', 'username', fallback=None)
+lastpass_password = credentials_conf.get('lastpass', 'password', fallback=None)
 
-#save some vars from the command line options
-from get_cmd_line_options import args
-current_project     = args.current_project if args.current_project else get_project_from_dir(os.getcwd())
+#save some variables from the command line options
+from cmd_args import args
+
+current_project     = args.current_project if args.current_project else _get_project_from_dir(".")
 theme               = args.theme if args.theme else current_project
 md5_passwd          = args.md5 if args.md5 else None
-filezilla_entry     = args.filezilla if args.filezilla else None
 
 try:
     dns             = args.dns[0]
     dns_output_file = args.dns[1]
 except IndexError:
     dns_output_file = None
-verbose            = getattr(args, 'verbose')
+
+try:
+    wpw_name        = args.wpw[0]
+    wpw_level       = int(args.wpw[1])
+except IndexError:
+    wpw_name = wpw_level = None
+
+verbose             = getattr(args, 'verbose')
 
 change_current_project(current_project)
 

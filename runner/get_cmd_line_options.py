@@ -1,13 +1,12 @@
-''' parses the command line options, and stores the result in the args variable.
-The stored variable name is the same as its command line option except
-any - is replaced with a _ and the beginning -'s are removed.
-also the project name is stored as the variable current_project '''
+''' parses the command line options, and stores the result in the args object.
+the project name will be stored under vars.current_project '''
+
 import sys, argparse, interactive_prompt
 
 #create our command line options
 
-usage_help_str = '''sebo command projectName [options]
-or:    sebo [--update] [--watch]
+usage_help_str = '''sebo command [options]
+or for wordpress commands:    sebo command projectName [options]
 '''
 
 parser = argparse.ArgumentParser(epilog="More info can be found at http://sitesmash.com/docs/docs/maintenance/other/smash-utils/", usage=usage_help_str, add_help=False)
@@ -26,6 +25,7 @@ wordpress.add_argument("-w", "--watch", help="watches the project for changes. T
 maintenance.add_argument("--dns", nargs="+", default="", const=None, metavar=("domain.com", "output.txt"), help="Does a DNS lookup and optionally saves the results to a text file")
 maintenance.add_argument("--md5", nargs="?", default="", metavar="password", help="takes a password and outputs the md5 hash and copies it to the clipboard.")
 maintenance.add_argument("--filezilla", nargs="?", default="", metavar="entry", help="Filezilla's interface hides passwords, but if you provide the name from Filezilla's site manager, I'll tell you the password")
+maintenance.add_argument("--wpw", nargs="*", default=[], metavar=("client name", "level of warranty (1, 2, or 3)"), help="Performs part of the initial setup for a new WordPress Warranty client. Right now this just sets up a maintenance log in Google Drive.")
 
 other.add_argument("--update", help="updates this script", action="store_true")
 other.add_argument("-v", "--verbose", help="", action="store_true")

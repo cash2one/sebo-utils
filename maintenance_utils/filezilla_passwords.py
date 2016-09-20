@@ -1,25 +1,38 @@
-import base64
+import os, os.path, base64
 import lxml.etree
 import vars
 
-file = r"C:\Users\Russell\AppData\Roaming\FileZilla\sitemanager.xml"
+def find(search_term):
+    import os
+    if os.name != "nt":
+        raise Exception("This command doesn't work on a macs. :P") #I just need to know where the sitemanager.xml file is stored on macs/Linux
 
-root = lxml.etree.parse(file)
-entry = vars.filezilla_entry.strip()
-e = root.xpath('.//Server[text()="' + entry + '"]')
-#e = root.xpath('.//Server[contains(text(), "'+ entry +'")]')
+    logins_file = os.path.join(os.getenv("APPDATA"), r"FileZilla\sitemanager.xml")
 
-host = e[0].find("Host").text
-user = e[0].find("User").text
-passwd = e[0].find("Pass").text
-name = e[0].find("Name").text
-encoding = e[0].find("EncodingType").text.lower()
-if encoding != "auto" and encoding != "base64":
-    raise Exception("Sorry, the password was encrypted using the encryption method '%s' which I do not yet understand how to work with" % encoding)
+    root = lxml.etree.parse(logins_file)
+    matches = root.xpath(".//Server//*[contains(text(),'"+ search_term +"')]")
 
-passwd = base64.b64decode(passwd).decode("utf-8") 
+    for el in matches:
+        el = el.getparent()
+        host = el.find("Host").text
+        user = el.find("User").text
+        passwd = el.find("Pass").text
+        name = el.find("Name").text
+        encoding = el.find("EncodingType").text.lower()
+        if encoding != "auto" and encoding != "base64":
+            raise Exception("Sorry, the password was encrypted using the encryption method '%s' which I do not yet understand how to work with" % encoding)
 
-print("\nInfo for", name)
-print("host:", host)
-print("user:", user)
-print("password:", passwd)
+        passwd = base64.b64decode(passwd).decode("utf-8")
+
+        yield (name, host, user, passwd)
+
+    else:
+        if vars.verbose:
+            print("no filezilla logins found using the search term %s" % entry)
+
+def main(search_term):
+    for name, host, user, passwd in find(search_term):
+        print("\nInfo for", name)
+        print("host:", host)
+        print("user:", user)
+        print("password:", passwd)
