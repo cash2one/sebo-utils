@@ -1,4 +1,4 @@
 # sebo-utils
 Awesome automation stuff
 
-See http://sebooperations.com/sebo-utils-documentation/ for more info.
+See http://sitesmash.com/docs/docs/all-developers/smash-utils/smash-utils/ for more info.
