@@ -1,5 +1,26 @@
-Run 
+Run
 smash --help
 for help
 
-Some stuff to know when developing sebo-utils. The sebo_runner sub-package takes care of reading in command-line paramaters and saving them inside of the vars library. This folder is added to the system path so that the vars library can be called from anywhere. The lib package is also added to the system path and it's libraries are available from anywhere as well. To add a new command, add it to one of the util folders, and add the appropriate entries in main.py and sebo_runner/get_cmd_line_options.py
+Run
+smash --setup
+to perform the initial setup
+
+
+-----------------------------------------------------
+
+
+Info for developers of this script:
+
+Execution starts with the smash.bat or smash.sh file, and continue to the runner/runner.py file
+
+If you would like to add a new command, add a file to the wordpress_utils or maintenance_utils folder
+You will then need to add a new entry to the runner/runner.py for your script
+You will also need to add an argparse entry in runner/get_cmd_line_options.py
+
+There isn't much boilerplate and any of the utils modules could easily be made to run without being called by the runner which is nice.
+
+You will want to take a look at what's in the runner/vars.py module. It has the location to store user specific data
+along with various pieces of info that have been stored in config files.
+Also the lib/webfaction.py module is pretty handy for interacting with Webfaction.
+You can get any password you need with the lib/lastpass.find() function

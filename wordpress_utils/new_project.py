@@ -4,7 +4,7 @@
 import subprocess, os.path
 
 import paramiko
-import vars
+from runner import vars
 
 def assert_webfaction_dir_exists(the_dir):
 

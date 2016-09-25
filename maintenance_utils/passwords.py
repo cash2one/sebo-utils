@@ -1,4 +1,4 @@
-import vars
+from runner import vars
 from lib.errors import SmashException
 
 import maintenance_utils.filezilla_passwords

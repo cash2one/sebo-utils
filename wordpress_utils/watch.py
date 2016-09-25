@@ -2,7 +2,7 @@
 
 
 import os.path, subprocess
-import vars
+from runner import vars
 
 if not vars.current_project:
     vars.change_current_project( input('Enter a project to watch: ') )

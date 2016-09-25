@@ -13,7 +13,7 @@
 import os, sys, time, re
 import urllib.request, urllib.parse, urllib.error, urllib.parse, unittest
 
-import vars
+from runner import vars
 
 webfaction_user = vars.ftp_username
 webfaction_passwd = vars.ftp_password

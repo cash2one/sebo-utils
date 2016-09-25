@@ -5,7 +5,7 @@ in sync with webfaction.
 
 import subprocess, os
 import os.path
-import vars
+from runner import vars
 
 
 from . import ftp_credentials

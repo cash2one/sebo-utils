@@ -6,7 +6,7 @@ import oauth2client
 from oauth2client import client
 from oauth2client import tools
 
-import vars
+from runner import vars
 
 flags = tools.argparser.parse_args(args=["--logging_level", "DEBUG"]) #these flags can be found at http://oauth2client.readthedocs.io/en/latest/source/oauth2client.tools.html#oauth2client.tools.run_flow. The following flag is not mentioned, but can be used as well --logging_level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
 

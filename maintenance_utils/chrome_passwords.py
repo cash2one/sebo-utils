@@ -1,7 +1,7 @@
 import os, os.path, sys, sqlite3
 from pathlib import Path
 
-import vars
+from runner import vars
 from lib.errors import SmashException
 
 if os.name == 'nt':

@@ -2,7 +2,7 @@
 
 
 import subprocess, os, os.path
-import vars
+from runner import vars
 
 #sometimes multiple themes will exist within a project. If this is the case we need to create the parent directory, otherwise the pscp command will fail.
 project_parent_dir = os.path.dirname(vars.project_dir)

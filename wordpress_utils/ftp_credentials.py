@@ -2,7 +2,7 @@
 creates the .ftpass and and remote_sync.json files
 '''
 import os, sys
-import vars
+from runner import vars
 
 remote_sync_file_contents = """
 {

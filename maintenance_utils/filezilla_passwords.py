@@ -1,6 +1,6 @@
 import os, os.path, base64
 import lxml.etree
-import vars
+from runner import vars
 
 def find(search_term):
     import os
